@@ -1,0 +1,10 @@
+(^|\/)\.
+\.bs$
+\.c$
+\.o$
+stream-constants.xs
+^\.svn
+\.bak$
+blib
+~$
+\.old$
