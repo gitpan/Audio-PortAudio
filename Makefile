@@ -15,7 +15,7 @@
 #     LIBS => [q[-lportaudio]]
 #     NAME => q[Audio::PortAudio]
 #     OPTIMIZE => q[-O]
-#     PREREQ_PM => { Test::More=>q[0], Audio::SndFile=>q[0] }
+#     PREREQ_PM => { Test::More=>q[0] }
 #     VERSION_FROM => q[PortAudio.pm]
 
 # --- MakeMaker post_initialize section:
@@ -56,11 +56,11 @@ DIRFILESEP = /
 DFSEP = $(DIRFILESEP)
 NAME = Audio::PortAudio
 NAME_SYM = Audio_PortAudio
-VERSION = 0.01
+VERSION = 0.02
 VERSION_MACRO = VERSION
-VERSION_SYM = 0_01
+VERSION_SYM = 0_02
 DEFINE_VERSION = -D$(VERSION_MACRO)=\"$(VERSION)\"
-XS_VERSION = 0.01
+XS_VERSION = 0.02
 XS_VERSION_MACRO = XS_VERSION
 XS_DEFINE_VERSION = -D$(XS_VERSION_MACRO)=\"$(XS_VERSION)\"
 INST_ARCHLIB = blib/arch
@@ -263,7 +263,7 @@ RCS_LABEL = rcs -Nv$(VERSION_SYM): -q
 DIST_CP = best
 DIST_DEFAULT = tardist
 DISTNAME = Audio-PortAudio
-DISTVNAME = Audio-PortAudio-0.01
+DISTVNAME = Audio-PortAudio-0.02
 
 
 # --- MakeMaker macro section:
@@ -573,11 +573,10 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '# http://module-build.sourceforge.net/META-spec.html' > META_new.yml
 	$(NOECHO) $(ECHO) '#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#' >> META_new.yml
 	$(NOECHO) $(ECHO) 'name:         Audio-PortAudio' >> META_new.yml
-	$(NOECHO) $(ECHO) 'version:      0.01' >> META_new.yml
+	$(NOECHO) $(ECHO) 'version:      0.02' >> META_new.yml
 	$(NOECHO) $(ECHO) 'version_from: PortAudio.pm' >> META_new.yml
 	$(NOECHO) $(ECHO) 'installdirs:  site' >> META_new.yml
 	$(NOECHO) $(ECHO) 'requires:' >> META_new.yml
-	$(NOECHO) $(ECHO) '    Audio::SndFile:                0' >> META_new.yml
 	$(NOECHO) $(ECHO) '    Test::More:                    0' >> META_new.yml
 	$(NOECHO) $(ECHO) '' >> META_new.yml
 	$(NOECHO) $(ECHO) 'distribution_type: module' >> META_new.yml
@@ -923,12 +922,11 @@ testdb_static :: pure_all $(MAP_TARGET)
 # --- MakeMaker ppd section:
 # Creates a PPD (Perl Package Description) for a binary distribution.
 ppd:
-	$(NOECHO) $(ECHO) '<SOFTPKG NAME="$(DISTNAME)" VERSION="0,01,0,0">' > $(DISTNAME).ppd
+	$(NOECHO) $(ECHO) '<SOFTPKG NAME="$(DISTNAME)" VERSION="0,02,0,0">' > $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '    <TITLE>$(DISTNAME)</TITLE>' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '    <ABSTRACT></ABSTRACT>' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '    <AUTHOR>Joost Diepenmaat &lt;jdiepen AT cpan.org&gt;</AUTHOR>' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '    <IMPLEMENTATION>' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <DEPENDENCY NAME="Audio-SndFile" VERSION="0,0,0,0" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <DEPENDENCY NAME="Test-More" VERSION="0,0,0,0" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <OS NAME="$(OSNAME)" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <ARCHITECTURE NAME="i686-linux-thread-multi" />' >> $(DISTNAME).ppd

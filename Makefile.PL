@@ -44,7 +44,6 @@ WriteMakefile(
     'VERSION_FROM'	=> 'PortAudio.pm', # finds $VERSION
     'PREREQ_PM'		=> {
 			    'Test::More' => 0, 
-			    'Audio::SndFile' => 0,
     }, # e.g., Module::Name => 1.i
     
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005

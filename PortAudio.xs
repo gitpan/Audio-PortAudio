@@ -72,35 +72,42 @@ MODULE = Audio::PortAudio::Stream PACKAGE = Audio::PortAudio::Stream
 INCLUDE: stream-constants.xs
 
 int
-_internal_read_stream( self, buffer, frames, typesize )
+_internal_read_stream( self, buffer, frames, typesize, channels )
     Audio_PortAudio_Stream self
     SV* buffer
     unsigned long frames
     int typesize
+    int channels
     PREINIT:
     unsigned long blen;
     void *realbuffer;
     CODE:
+    if (typesize == 0) croak("typesize = 0");
+    if (channels == 0) croak("channels = 0");
     if (SvPOK(buffer)) {
         SvPOK_only(buffer);
     }
     else {
         SvPV_force(buffer,PL_na);
     }
-    blen = ((frames * typesize) +1);
+    blen = ((frames * typesize *channels) +1);
     realbuffer = (void *) SvGROW(buffer, blen);
     RETVAL = !Pa_ReadStream(self, realbuffer, frames);
-    SvCUR_set(buffer,(STRLEN) (frames * typesize));
+    SvCUR_set(buffer,(STRLEN) (frames * typesize * channels));
     OUTPUT:
     RETVAL
 
 int
-_internal_write_stream( self, buffer, typesize)
+_internal_write_stream( self, buffer, typesize,channels)
     Audio_PortAudio_Stream self
     SV* buffer
     int typesize
+    int channels
     CODE:
-    RETVAL = !Pa_WriteStream( self, (const void*) SvPV_nolen(buffer), SvCUR(buffer) / typesize );
+    if (typesize == 0) croak("typesize = 0");
+    if (channels == 0) croak("channels = 0");
+/*warn("%d %d %d",typesize, channels, SvCUR(buffer) / ( typesize * channels) );*/
+RETVAL = !Pa_WriteStream( self, (const void*) SvPV_nolen(buffer), SvCUR(buffer) / ( typesize * channels));
     OUTPUT:
     RETVAL
 

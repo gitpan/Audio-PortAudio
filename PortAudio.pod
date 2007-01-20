@@ -1,6 +1,6 @@
 =head1 NAME
 
-Audio::PortAdio - portable audio I/O
+Audio::PortAudio - portable audio I/O
 
 =head1 SYNOPSIS
 
@@ -271,6 +271,11 @@ Number of frames that can be read before read() will block.
 Number of frames that can be written before write() will block.
 
 =head1 CHANGES
+
+
+ 0.02 - fixed makefile; no longer reports dependency on Audio::SndFile
+	fixed embarrassing typo in the name of this document :-)
+      - fixed some conversion problems with multiple channels
 
  0.01 - initial release
 

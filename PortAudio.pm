@@ -22,7 +22,7 @@
 package Audio::PortAudio;
 use strict;
 use base qw(DynaLoader);
-our $VERSION = 0.01;
+our $VERSION = 0.02;
 
 __PACKAGE__->bootstrap($VERSION);
 
@@ -67,12 +67,16 @@ my %closed;
 my %started;
 my %stream_typesize_in;
 my %stream_typesize_out;
+my %channels_in;
+my %channels_out;
 
 sub DESTROY {
     my ($self) = @_;
     $self->stop;
     delete $stream_typesize_in{$self};
     delete $stream_typesize_out{$self};
+    delete $channels_in{$self};
+    delete $channels_out{$self};
 }
 
 sub start {
@@ -99,7 +103,7 @@ sub close {
 }
 
 my %typesize = (
-    float32() => $Config{nvsize},
+    float32() => 4,
     int16()   => $Config{u16size},
     int32()   => $Config{u32size},
     int24()   => $Config{u32size},   # not sure, but probably
@@ -119,17 +123,25 @@ my %typevalue = (
 sub read {
     my ($self, undef, $frames) = @_;
     $self->start unless ($started{$self});
-#    warn "$frames,$stream_typesize_in{$self}";
-    $self->_internal_read_stream($_[1],$frames,$stream_typesize_in{$self});    
+    $self->_internal_read_stream($_[1],$frames,$stream_typesize_in{$self},$self->input_channels);    
 }
 
 sub write {
     my ($self) = @_;
     $self->start unless ($started{$self});
-#    warn "(buffer),$stream_typesize_out{$self})";
-    $self->_internal_write_stream($_[1],$stream_typesize_out{$self});
+#    warn "(buffer),$stream_typesize_out{$self})",$self->output_channels;
+    $self->_internal_write_stream($_[1],$stream_typesize_out{$self},$self->output_channels);
 
 }
+
+sub input_channels {
+  $channels_in{$_[0]} || 0;
+}
+
+sub output_channels {
+  $channels_out{$_[0]} || 0;
+}
+
 
 
 package Audio::PortAudio;
@@ -143,8 +155,11 @@ sub open_stream {
         $oargs->{sample_format} = $typevalue{$oargs->{sample_format} || "float32"} || $oargs->{sample_format};
     }
     my $stream = _open_stream($iargs,$oargs,@_);
-    $stream_typesize_in{$stream} = $iargs->{channel_count} * $typesize{$iargs->{sample_format}} if $iargs;
-    $stream_typesize_out{$stream} = $oargs->{channel_count} * $typesize{$oargs->{sample_format}} if $oargs;
+    $stream_typesize_in{$stream} = $typesize{$iargs->{sample_format}} if $iargs;
+    $stream_typesize_out{$stream} = $typesize{$oargs->{sample_format}} if $oargs;
+    $channels_in{$stream} =  $iargs->{channel_count} if $iargs;
+    $channels_out{$stream} = $oargs->{channel_count} if $oargs;
+
     return $stream;
 }
 

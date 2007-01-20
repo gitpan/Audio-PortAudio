@@ -111,10 +111,12 @@ while (1) {
     my @avg = map { 0 } 1 .. $channelcount;
     my @peak = @avg;
     my $c = 0;
+    my $t =0;
     for (unpack "f".($frames * $channelcount),$buffer) {
         $avg[$c] += abs($_);
         $peak[$c] = abs($_) if $peak[$c] < abs($_);
         $c = ++$c % $channelcount;
+	$t++;
     }
     for (@avg) {
         $_ /= $frames;
@@ -129,6 +131,7 @@ while (1) {
         my $line = ($avgchar x int($logged)).($peakchar x ($ddelta)).($blankchar x (41 - (int($logged) + $ddelta)));
         print "[$E\[32m",substr($line,0,20),"$E\[33m",substr($line,20,10),"$E\[31m",substr($line,30,10),"$E\[0m]\n";
     }
+    print "$t\r";
     print "Buffer overflow @ ".localtime(time)."\r" if !$ok;
 }
 
