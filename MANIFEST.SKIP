@@ -8,3 +8,5 @@ stream-constants.xs
 blib
 ~$
 \.old$
+Makefile$
+

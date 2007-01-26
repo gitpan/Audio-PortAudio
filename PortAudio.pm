@@ -22,7 +22,7 @@
 package Audio::PortAudio;
 use strict;
 use base qw(DynaLoader);
-our $VERSION = 0.02;
+our $VERSION = 0.03;
 
 __PACKAGE__->bootstrap($VERSION);
 

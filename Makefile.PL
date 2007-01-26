@@ -1,9 +1,46 @@
 #!/usr/bin/perl -w
 use strict;
 
-our $VERSION = 0.01;
-
 use ExtUtils::MakeMaker;
+
+my $fallbacklibs = "-lportaudio -lm -lpthread";
+my $libs = "";
+
+print "Testing for pkg-config...";
+my $pcversion =  `pkg-config --version`;
+if ($pcversion) {
+  print "ok ($pcversion)\n";
+  my $paversion;
+  for (qw(portaudio-2.0 portaudio)) {
+    print "Testing for $_...";
+    chomp($paversion = `pkg-config --modversion $_`);
+    if ($paversion && $paversion >= 19) {
+      print "found (v$paversion)\n";
+      chomp($libs = `pkg-config --libs $_`);
+      last;
+    }
+    print $paversion ? "unsuitable (v$paversion)\n" : "not found\n";
+  }
+  if (!$paversion || $paversion < 19) {
+    die "\nNo suitable portaudio library found.\nYou need at least portaudio v19 or higher to install this module\nSee http://www.portaudio.com/\n";
+  }
+}
+
+if (!$libs) {
+  my $r = prompt("You don't have pkg-config installed. I can't test if you have
+portaudio installed.
+
+If you do have portaudio v19 or higher installed you can continue anyway
+Do you want to continue? (y/n)","n");
+  if ($r =~ /^n$/i) {
+    warn "Exiting\n";
+    exit 0;
+  }
+  $libs = prompt("Please specify your portaudio linker flags",$fallbacklibs);
+}
+
+
+
 
 open my $f,">","stream-constants.xs" or die "Can't make stream-constants.xs: $!";
 for (qw(paFloat32 paInt16 paInt32 paInt24 paInt8 paUInt8)) {
@@ -48,7 +85,7 @@ WriteMakefile(
     
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
        (AUTHOR     => 'Joost Diepenmaat <jdiepen AT cpan.org>') : ()),
-    LIBS              => ['-lportaudio'], # e.g., '-lm'
+    LIBS              => [$libs], # e.g., '-lm'
     'EXE_FILES'		=> [],
     'OPTIMIZE'		=> '-O',
 );

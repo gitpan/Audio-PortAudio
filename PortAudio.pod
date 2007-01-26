@@ -272,6 +272,11 @@ Number of frames that can be written before write() will block.
 
 =head1 CHANGES
 
+ 0.03 - distribution/building improvements only:
+	now uses pkg-config (if available) to detect portaudio version
+        and LIBS flags
+	moved vumeter example to eg directory
+	removed Makefile from distribution
 
  0.02 - fixed makefile; no longer reports dependency on Audio::SndFile
 	fixed embarrassing typo in the name of this document :-)
